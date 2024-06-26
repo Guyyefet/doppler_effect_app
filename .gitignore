@@ -1,0 +1,10 @@
+venv/
+website/
+pyo_app/__pycache__/
+pyo_app/test.py
+pyo_app/gui2.py
+pyo_app/animation.py
+pyo_app/audio.py
+pyo_app/controls.py
+pyo_app/dup_animation.py
+pyo_app/objects.py
