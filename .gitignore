@@ -8,3 +8,4 @@ pyo_app/audio.py
 pyo_app/controls.py
 pyo_app/dup_animation.py
 pyo_app/objects.py
+pyo_app/doppler.py
