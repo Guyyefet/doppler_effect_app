@@ -1,10 +1,13 @@
 # Constants
 SPEED_OF_SOUND = 343.0  # Speed of sound in m/s
-INITIAL_FREQUENCY = 440
+FREQUENCY = 440
+SAMPLE_RATE = 44100
+SMOOTHING_FACTOR = 0.1
 
 # Animation parameters
 FPS = 30
 DURATION = 20
+
 
 # Initial positions and speed
 STATIC_OBJECT_POSITION = [0, 0]  # Position of the observer
