@@ -1,9 +1,11 @@
-import time
 import matplotlib.pyplot as plt
-from audio import start_pyo_server
-from gui import create_gui
+from view.gui import create_gui
+from presenter.simulation_presenter import SimulationPresenter
+
+def main():
+    fig, ax, sliders, start_button = create_gui()
+    presenter = SimulationPresenter(fig, ax, sliders, start_button)
+    plt.show()
 
 if __name__ == "__main__":
-    fig, ani, moving_object, static_object, sliders, reset_button = create_gui()
-    plt.show()
-    start_pyo_server.start()
+    main()

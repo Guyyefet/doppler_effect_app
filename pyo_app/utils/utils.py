@@ -1,11 +1,11 @@
 import numpy as np
-from doppler import update_frequency, restart_sound
+# from doppler import update_frequency, restart_sound
 import time
 
-def compute_position(initial_position, speed, duration, fps=30):
-    t = np.linspace(0, duration, duration * fps)
-    position = [(initial_position[0] + speed * ti, initial_position[1]) for ti in t]
-    return position
+# def compute_position(initial_position, speed, duration, fps=30):
+#     t = np.linspace(0, duration, duration * fps)
+#     position = [(initial_position[0] + speed * ti, initial_position[1]) for ti in t]
+#     return position
 
 # Update function for animation
 def update_animation_frame(frame, moving_object, moving_object_position, static_object, static_object_position):

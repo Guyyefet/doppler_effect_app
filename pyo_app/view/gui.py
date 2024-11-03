@@ -36,8 +36,9 @@ def create_gui():
         slider = create_slider(plt.axes(ax_pos), label, valmin, valmax, valinit)
         sliders.append(slider)
 
-    # Create start/restart button
-    start_button = Button(plt.axes([0.8, 0.5, 0.1, 0.04]), 'Start', color='lightgoldenrodyellow', hovercolor='0.975')
+    # Create start button
+    start_button = Button(plt.axes([0.8, 0.5, 0.1, 0.04]), 'Start', 
+                         color='lightgoldenrodyellow', hovercolor='0.975')
 
     return fig, ax, sliders, start_button
 
