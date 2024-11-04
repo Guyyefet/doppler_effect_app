@@ -1,36 +1,34 @@
 import numpy as np
 from model.physics import compute_position
 
-class SimulationObject:
-    def __init__(self, position, velocity=np.array([0.0, 0.0])):
-        self.position = np.array(position, dtype=float)
-        self.velocity = np.array(velocity, dtype=float)
-        self.offset = np.array([0.0, 0.0])
-        self.motion_type = 'constant'
+class StaticObject:
+    def __init__(self, position):
+        self.position = position
 
     def update(self, **kwargs):
-        if 'offset' in kwargs:
-            self.offset = np.array(kwargs['offset'], dtype=float)
-            
+        if 'position' in kwargs:
+            self.position = kwargs['position']
+
+    def get_state(self):
+        return self.position
+
+class MovingObject:
+    def __init__(self, position, velocity):
+        self.position = position
+        self.velocity = velocity
+
+    def update(self, **kwargs):
         if 'velocity' in kwargs:
-            self.velocity = np.array(kwargs['velocity'], dtype=float)
-            
-        if 'motion_type' in kwargs:
-            self.motion_type = kwargs['motion_type']
-            
+            self.velocity = kwargs['velocity']
+        
         if 'time' in kwargs:
+            offset = kwargs.get('offset', np.array([0, 0]))
             self.position = compute_position(
-                self.position,
+                self.position, 
                 self.velocity,
                 kwargs['time'],
-                self.motion_type,
-                self.offset
+                offset=offset
             )
 
     def get_state(self):
-        return {
-            'position': self.position,
-            'velocity': self.velocity,
-            'offset': self.offset,
-            'motion_type': self.motion_type
-        }
+        return self.position

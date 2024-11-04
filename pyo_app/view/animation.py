@@ -1,37 +1,37 @@
 from matplotlib.animation import FuncAnimation
-import matplotlib.pyplot as plt
-from model.objects import SimulationObject
+from model.objects import StaticObject, MovingObject
 from utils.constants import FPS, DURATION
 import numpy as np
 
 def create_animation(fig, ax, sliders):
-    # Extract values from sliders
-    speed = sliders[0].val
-    static_x, static_y = sliders[1].val, sliders[2].val
-    moving_x, moving_y = sliders[3].val, sliders[4].val
+    # Get initial positions from sliders
+    static_pos = np.array([sliders[1].val, sliders[2].val], dtype=np.float64)
+    moving_pos = np.array([sliders[3].val, sliders[4].val], dtype=np.float64)
+    velocity = np.array([sliders[0].val, 0], dtype=np.float64)
+    
+    static_obj = StaticObject(static_pos)
+    moving_obj = MovingObject(moving_pos, velocity)
 
-    static_obj = SimulationObject(np.array([static_x, static_y]))
-    moving_obj = SimulationObject(np.array([moving_x, moving_y]), np.array([speed, 0]))
-
-    last_frame_time = 0
+    # Create scatter plots once
+    static_scatter = ax.scatter([], [], c='blue', s=100, label='Static Object')
+    moving_scatter = ax.scatter([], [], c='red', s=100, label='Moving Object')
 
     def update_frame(frame):
-        nonlocal last_frame_time
         current_time = frame / FPS
-        dt = current_time - last_frame_time  # Time since last frame
-        last_frame_time = current_time
-
-        moving_obj.update(time=dt)  # Pass time delta instead of total time
-
-        # Clear only the artists, not the entire axis
-        for artist in ax.collections + ax.lines:
-            artist.remove()
-
-        # Plot the objects
-        ax.scatter(*static_obj.position, c='blue', s=100, label='Static Object')
-        ax.scatter(*moving_obj.position, c='red', s=100, label='Moving Object')
         
-        return ax.collections
+        # Get current values from sliders
+        static_pos = np.array([sliders[1].val, sliders[2].val], dtype=np.float64)
+        offset = np.array([sliders[3].val, sliders[4].val], dtype=np.float64)
+        velocity = np.array([sliders[0].val, 0], dtype=np.float64)
+
+        # Update objects with current values
+        static_obj.update(position=static_pos)
+        moving_obj.update(time=current_time, velocity=velocity, offset=offset)
+
+        static_scatter.set_offsets(static_obj.get_state()[np.newaxis])
+        moving_scatter.set_offsets(moving_obj.get_state()[np.newaxis])
+        
+        return static_scatter, moving_scatter
 
     animation = FuncAnimation(fig, update_frame, frames=int(FPS*DURATION), 
                             interval=1000/FPS, repeat=False, blit=True)

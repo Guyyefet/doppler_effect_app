@@ -1,5 +1,5 @@
 import numpy as np
-from model.objects import SimulationObject
+from model.objects import StaticObject, MovingObject
 from view.animation import create_animation, start_animation, stop_animation
 from utils.constants import FPS, DURATION
 
