@@ -7,6 +7,7 @@ class StaticObject:
 
     def update(self, **kwargs):
         if 'position' in kwargs:
+            from logger.objects_logger import log_static_update
             self.position = kwargs['position']
 
     def get_state(self):
@@ -19,6 +20,7 @@ class MovingObject:
 
     def update(self, **kwargs):
         if 'velocity' in kwargs:
+            from logger.objects_logger import log_moving_update
             self.velocity = kwargs['velocity']
         
         if 'time' in kwargs:

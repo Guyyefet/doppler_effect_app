@@ -12,14 +12,14 @@ def compute_position(position, velocity, time, motion_type='constant', offset=np
     Returns:
         numpy array of new position [x, y]
     """
-    position = np.array(position, dtype=np.float64)
-    velocity = np.array(velocity, dtype=np.float64)
-    offset = np.array(offset, dtype=np.float64)
-    time = float(time)
+    # position = np.array(position, dtype=np.float64)
+    # velocity = np.array(velocity, dtype=np.float64)
+    # offset = np.array(offset, dtype=np.float64)
+    scaled_time = time * 0.1
 
     # Calculate base position according to motion type
     if motion_type == 'constant':
-        new_position = position + velocity * time
+        new_position = position + velocity * scaled_time
     elif motion_type == 'accelerating':
         # Example: constant acceleration
         acceleration = velocity  # Using velocity as acceleration for example
