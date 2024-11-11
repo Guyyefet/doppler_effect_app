@@ -1,70 +1,86 @@
 import numpy as np
-from model.objects import StaticObject, MovingObject
+from model.objects import MovingObject
 from view.animation import create_animation
+from utils.constants import FPS, INITIAL_OBJECT_POSITION, INITIAL_OBJECT_SPEED
 
 class SimulationPresenter:
     def __init__(self, fig, ax, sliders, start_button):
         self.fig = fig
         self.ax = ax
-        self.sliders = sliders
         self.start_button = start_button
         
-        # Create objects with initial slider values
-        self.static_obj = self.create_static_object()
-        self.moving_obj = self.create_moving_object()
+        # Animation state
+        self.is_running = False
+        self.simulation_time = 0
         self.animation = None
         
-        # Connect slider events
-        self.sliders[1].on_changed(self.on_static_position_change)
-        self.sliders[2].on_changed(self.on_static_position_change)
+        # Map sliders
+        self.slider_map = {
+            'speed': sliders[0],
+            'position_x': sliders[1],
+            'position_y': sliders[2]
+        }
         
+        # Create object
+        self.moving_object = MovingObject(INITIAL_OBJECT_POSITION, INITIAL_OBJECT_SPEED)
+        
+        # Connect UI events
+        # for slider in sliders:
+        #     slider.on_changed(self.on_slider_change)
         self.start_button.on_clicked(self.handle_button_click)
 
-    def create_static_object(self):
-        static_pos = np.array([self.sliders[1].val, self.sliders[2].val], dtype=np.float64)
-        return StaticObject(static_pos)
+    def get_parameters_from_sliders(self):
+        return {
+            'position': np.array([
+                self.slider_map['position_x'].val,
+                self.slider_map['position_y'].val
+            ]),
+            'velocity': np.array([
+                self.slider_map['speed'].val/50,
+                0
+            ])
+        }
 
-    def create_moving_object(self):
-        moving_pos = np.array([self.sliders[3].val, self.sliders[4].val], dtype=np.float64)
-        velocity = np.array([self.sliders[0].val/50, 0], dtype=np.float64)
-        return MovingObject(moving_pos, velocity)
+    def update_simulation(self, frame):
+        if self.is_running:
+            self.simulation_time = frame / FPS
+            sliders_params = self.get_parameters_from_sliders()
+            
+            # Update physics
+            self.moving_object.update(
+                time=self.simulation_time,
+                velocity=sliders_params['velocity']
+            )
+            
+            absulote_position = self.moving_object.position + sliders_params['position']
 
-    def on_static_position_change(self, val):
-        pos = np.array([self.sliders[1].val, self.sliders[2].val], dtype=np.float64)
-        self.static_obj.update(position=pos)
-        self.fig.canvas.draw_idle()
-
-    def get_current_velocity(self):
-        return np.array([self.sliders[0].val/50, 0], dtype=np.float64)
-
-    def get_moving_offset(self):
-        return np.array([self.sliders[3].val, self.sliders[4].val], dtype=np.float64)
+            # Get physics state and add offset
+            return absulote_position
+        
+        # If not running, just return current state with offset
+        return self.get_parameters_from_sliders()['position']
 
     def initialize_simulation(self):
-        self.animation = create_animation(
-            self.fig, 
-            self.ax, 
-            self.static_obj,
-            self.moving_obj,
-            self.get_current_velocity,
-            self.get_moving_offset
-        )
+        self.simulation_time = 0
+        self.animation = create_animation(self, self.fig, self.ax)
+        # self.get_parameters_from_sliders(self)
 
     def start_simulation(self):
+        self.is_running = True
         self.animation.event_source.start()
 
     def stop_simulation(self):
+        self.is_running = False
         self.animation.event_source.stop()
 
     def handle_button_click(self, event):
         if not self.animation:
             self.initialize_simulation()
 
-        if not self.animation.event_source._interval == 0:
+        if not self.is_running:
             self.start_simulation()
             self.start_button.label.set_text('Restart')
         else:
             self.stop_simulation()
             self.initialize_simulation()
             self.start_simulation()
-        self.fig.canvas.draw_idle()

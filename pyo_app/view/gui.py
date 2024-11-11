@@ -16,17 +16,12 @@ def create_gui():
     ax.grid(False)
     ax.set_xticks([])
     ax.set_yticks([])
-    
-    # Add placeholder for legend
-    ax.legend([], title="Objects", bbox_to_anchor=(1.05, 1), loc="upper left")
 
     # Slider parameters
     slider_params = [
         ('Speed', 0.1, 2000.0, 500),
-        ('Static obj X', -600.0, 600.0, 0),
-        ('Static obj Y', -600.0, 600.0, 0),
-        ('Moving obj X', -600.0, 600.0, -500),
-        ('Moving obj Y', -600.0, 600.0, 0)
+        ('Source X', -600.0, 600.0, -500),
+        ('Source Y', -600.0, 600.0, 0)
     ]
 
     # Create sliders

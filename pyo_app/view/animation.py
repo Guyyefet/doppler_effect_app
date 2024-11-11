@@ -1,34 +1,38 @@
 from matplotlib.animation import FuncAnimation
-from utils.constants import FPS, DURATION
+from utils.constants import FPS, DURATION, INITIAL_OBJECT_POSITION
 import numpy as np
 
-def create_animation(fig, ax, static_obj, moving_obj, get_velocity, get_offset):
-    # Create scatter plots
-    static_scatter = ax.scatter(*static_obj.get_state(), c='blue', s=100, label='Static Object')
-    moving_scatter = ax.scatter(*moving_obj.get_state(), c='red', s=100, label='Moving Object')
+def create_animation(presenter, fig, ax):
+    # Create scatter plot and show initial position
+    source_scatter = ax.scatter(
+        INITIAL_OBJECT_POSITION[0],
+        INITIAL_OBJECT_POSITION[1],
+        c='red', 
+        s=100, 
+        label='Sound Source'
+    )
+    
+    # Add listener reference point at origin
+    ax.scatter([0], [0], c='blue', s=100, label='Listener')
+    # ax.legend()
 
     def update_frame(frame):
-        current_time = frame / FPS
+        # Get updated state from presenter
+        current_position = presenter.update_simulation(frame)
         
-        # Get current values from presenter
-        velocity = get_velocity()
-        offset = get_offset()
+        # Only handle visualization
+        source_scatter.set_offsets(current_position.reshape(1, -1))
         
-        # Update moving object with current values
-        moving_obj.update(
-            time=current_time,
-            velocity=velocity,
-            offset=offset
-        )
+        return [source_scatter]
 
-        # Update scatter positions
-        static_scatter.set_offsets([static_obj.get_state()])
-        moving_scatter.set_offsets([moving_obj.get_state()])
-        
-        return static_scatter, moving_scatter
-
-    animation = FuncAnimation(fig, update_frame, frames=int(FPS*DURATION), 
-                            interval=1000/FPS, repeat=False, blit=True)
+    animation = FuncAnimation(
+        fig, 
+        update_frame, 
+        frames=int(FPS*DURATION), 
+        interval=1000/FPS, 
+        repeat=False, 
+        blit=True
+    )
     animation.event_source.stop()
 
     return animation
