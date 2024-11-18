@@ -1,6 +1,3 @@
 # model/__init__.py
-from .objects import MovingObject
-from .physics import compute_position
-
-# This allows:
-from model import MovingObject  # instead of from model.objects import SimulationObject
+from .objects import Source
+from .physics import compute_position, calculate_doppler_shift

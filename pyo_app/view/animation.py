@@ -1,12 +1,13 @@
 from matplotlib.animation import FuncAnimation
-from utils.constants import FPS, DURATION, INITIAL_OBJECT_POSITION
-import numpy as np
+from utils.constants import FPS, DURATION, INITIAL_SOURCE_POSITION
+from itertools import count
+# import numpy as np
 
 def create_animation(presenter, fig, ax):
     # Create scatter plot and show initial position
     source_scatter = ax.scatter(
-        INITIAL_OBJECT_POSITION[0],
-        INITIAL_OBJECT_POSITION[1],
+        INITIAL_SOURCE_POSITION[0],
+        INITIAL_SOURCE_POSITION[1],
         c='red', 
         s=100, 
         label='Sound Source'
@@ -28,7 +29,7 @@ def create_animation(presenter, fig, ax):
     animation = FuncAnimation(
         fig, 
         update_frame, 
-        frames=int(FPS*DURATION), 
+        frames=count(), 
         interval=1000/FPS, 
         repeat=False, 
         blit=True

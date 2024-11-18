@@ -1,7 +1,7 @@
 import numpy as np
-from model.objects import MovingObject
+from model.objects import Source
 from view.animation import create_animation
-from utils.constants import FPS, INITIAL_OBJECT_POSITION, INITIAL_OBJECT_SPEED
+from utils.constants import FPS, INITIAL_SOURCE_POSITION, INITIAL_SOURCE_SPEED
 
 class SimulationPresenter:
     def __init__(self, fig, ax, sliders, start_button):
@@ -11,7 +11,7 @@ class SimulationPresenter:
         
         # Animation state
         self.is_running = False
-        self.simulation_time = 0
+        self.simulation_time = np.float32(0)
         self.animation = None
         
         # Map sliders
@@ -22,11 +22,9 @@ class SimulationPresenter:
         }
         
         # Create object
-        self.moving_object = MovingObject(INITIAL_OBJECT_POSITION, INITIAL_OBJECT_SPEED)
+        self.source = Source(INITIAL_SOURCE_POSITION, INITIAL_SOURCE_SPEED)
         
         # Connect UI events
-        # for slider in sliders:
-        #     slider.on_changed(self.on_slider_change)
         self.start_button.on_clicked(self.handle_button_click)
 
     def get_parameters_from_sliders(self):
@@ -34,36 +32,29 @@ class SimulationPresenter:
             'position': np.array([
                 self.slider_map['position_x'].val,
                 self.slider_map['position_y'].val
-            ]),
+            ], dtype=np.float32),
             'velocity': np.array([
-                self.slider_map['speed'].val/50,
+                self.slider_map['speed'].val,
                 0
-            ])
+            ], dtype=np.float32)
         }
 
     def update_simulation(self, frame):
         if self.is_running:
-            self.simulation_time = frame / FPS
-            sliders_params = self.get_parameters_from_sliders()
-            
-            # Update physics
-            self.moving_object.update(
-                time=self.simulation_time,
+            sliders_params = self.get_parameters_from_sliders()         
+            self.source.update(
                 velocity=sliders_params['velocity']
             )
             
-            absulote_position = self.moving_object.position + sliders_params['position']
-
-            # Get physics state and add offset
-            return absulote_position
+            absolute_position = self.source.position + sliders_params['position']
+            return absolute_position
         
-        # If not running, just return current state with offset
         return self.get_parameters_from_sliders()['position']
 
     def initialize_simulation(self):
         self.simulation_time = 0
+        self.source = Source(INITIAL_SOURCE_POSITION, INITIAL_SOURCE_SPEED)  # Reset source object
         self.animation = create_animation(self, self.fig, self.ax)
-        # self.get_parameters_from_sliders(self)
 
     def start_simulation(self):
         self.is_running = True
