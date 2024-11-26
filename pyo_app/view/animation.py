@@ -1,7 +1,6 @@
 from matplotlib.animation import FuncAnimation
 from utils.constants import FPS, DURATION, INITIAL_SOURCE_POSITION
 from itertools import count
-# import numpy as np
 
 def create_animation(presenter, fig, ax):
     # Create scatter plot and show initial position

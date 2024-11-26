@@ -1,4 +1,3 @@
-import numpy as np
 from model.physics import compute_position, calculate_doppler_shift
 from utils.constants import BASE_FREQUENCY, OBSORVER_POSITION, BASE_FREQUENCY, SPEED_OF_SOUND
 from logger import log_moving_update
